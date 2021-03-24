@@ -22,6 +22,11 @@ DEFAULT_REQUEST_HEADERS = {
     'Accept-Language': 'en',
 }
 
+# Pipeline配置
+ITEM_PIPELINES = {
+    'sic_edu.pipelines.MongoPipeline': 100,
+    'sic_edu.pipelines.MySQLPipeline': 200,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'sic_edu (+http://www.yourdomain.com)'
@@ -90,3 +95,18 @@ DEFAULT_REQUEST_HEADERS = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+YSQL_HOST = '127.0.0.1'
+
+# MySQL settings
+MySQLConfiguration = {
+    'host': '118.31.15.23',
+    'port': 3306,
+    'user': 'lsf',
+    'password': 'LSFlsf123',
+    'database': 'scrapy_demo',
+}
+
+MongoDBConfiguration = {
+    'host': '118.31.15.23',
+    'port': 27017,
+}
