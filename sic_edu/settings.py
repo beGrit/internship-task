@@ -18,7 +18,7 @@ ROBOTSTXT_OBEY = False
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    # 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'en',
 }
 
@@ -95,10 +95,10 @@ ITEM_PIPELINES = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-YSQL_HOST = '127.0.0.1'
+
 
 # MySQL settings
-MySQLConfiguration = {
+MYSQL_CONFIGURATION = {
     'host': '118.31.15.23',
     'port': 3306,
     'user': 'lsf',
@@ -106,7 +106,30 @@ MySQLConfiguration = {
     'database': 'scrapy_demo',
 }
 
-MongoDBConfiguration = {
+MONGODB_CONFIGURATION = {
     'host': '118.31.15.23',
     'port': 27017,
 }
+
+DOWNLOADER_MIDDLEWARES = {
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 90,
+    'sic_edu.middlewares.SeleniumMiddleware': 100,
+}
+
+FEEDS = {
+    './items.json': {
+        'format': 'json',
+        'encoding': 'utf8',
+        'store_empty': False,
+        'fields': None,
+        'indent': 4,
+        'item_export_kwargs': {
+            'export_empty_fields': True,
+        },
+    },
+}
+
+# 控制时间
+RETRY_TIMES = 1  # 重新请求次数
+DOWNLOAD_DELAY = 3  # 间隔时间
+CONCURRENT_REQUESTS = 5  # 请求并发数

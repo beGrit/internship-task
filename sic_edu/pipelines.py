@@ -9,6 +9,7 @@ import pymongo
 import pymysql
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
+import uuid
 
 
 class BasePipeline:
@@ -49,7 +50,7 @@ class MySQLPipeline:
 
     @classmethod
     def from_settings(cls, settings):
-        return cls(settings['MySQLConfiguration'])
+        return cls(settings['MYSQL_CONFIGURATION'])
 
     def open_spider(self, spider):
         self.db = pymysql.connect(**self.config)
@@ -59,7 +60,29 @@ class MySQLPipeline:
         self.db.close()
 
     def process_item(self, item, spider):
-        pass
+        sql = """
+        insert into 
+        `job_info_db`
+        set 
+        id = {id},
+        major = {major},
+        position_name = {postion_name},
+        salary = {salary},
+        enterprise_name = {enterprise_name},
+        position_description = {position_description},
+        welfare = {welfare},
+        position_detail_description = {position_detail_description},
+        contact_info = {contact_info},
+        company_info = {company_info},
+        createtime = {createtime},
+        modifiedtime = {modifiedtime},
+        """
+        item_adapter = ItemAdapter(item)
+        mysql_item = MySQLItem(**item_adapter.asdict())
+        mysql_item_adapter = ItemAdapter(mysql_item)
+        sql.format(mysql_item)
+        self.cursor.execute(sql)
+        return item
 
 
 class MongoPipeline(BasePipeline):
@@ -71,7 +94,7 @@ class MongoPipeline(BasePipeline):
 
     @classmethod
     def from_settings(cls, settings):
-        return cls(settings['MongoDBConfiguration'])
+        return cls(settings['MONGODB_CONFIGURATION'])
 
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(**self.config)
@@ -83,3 +106,13 @@ class MongoPipeline(BasePipeline):
     def process_spider(self, item, spider):
         self.db[self.collection_name].insert_one(dict(item))
         return item
+
+
+class MySQLItem(dict):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self['id'] = uuid.uuid1()
+        self['createtime'] = 11111
+        self['modifiedtime'] = 12312
+        for (k, v) in kwargs.items():
+            self[k] = v

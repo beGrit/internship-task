@@ -10,19 +10,6 @@ class EduScZcwjSpider(scrapy.Spider):
     name = 'edu_sc_zcwj'
     allowed_domains = ['edu.sc.gov.cn']
     start_urls = ['http://edu.sc.gov.cn/scedu/c100538/xxgk_list.shtml']
-    custom_settings = {
-        'MySQLConfiguration': {
-            'host': '118.31.15.23',
-            'port': 3306,
-            'user': 'lsf',
-            'password': 'LSFlsf123',
-            'database': 'scrapy_demo',
-        },
-        'MongoDBConfiguration': {
-            'host': '118.31.15.23',
-            'port': 27017
-        },
-    }
 
     def start_requests(self):
         for url in self.start_urls:

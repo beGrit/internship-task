@@ -2,6 +2,7 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
+from dataclasses import dataclass
 
 import scrapy
 from itemadapter import ItemAdapter
@@ -17,6 +18,13 @@ from itemadapter import ItemAdapter
         source			这条数据（通知）的来源，如：教育部、四川省教育厅
         content		    这条数据（通知）的正文源代码
 """
+
+
+class CollectionMixin:
+    def collect(self, **kwargs):
+        adapter = ItemAdapter(self)
+        for (k, v) in kwargs.items():
+            adapter[k] = v
 
 
 class SicEduZcwjItem(scrapy.Item):
@@ -36,3 +44,34 @@ class SicEduZcwjItem(scrapy.Item):
                 adaper[key] = value
         except KeyError as e:
             print(e)
+
+
+class JobInfoItem(scrapy.Item, CollectionMixin):
+    """Summary of class here
+    Attributes:
+
+    """
+    name = scrapy.Field()
+    area = scrapy.Field()
+    salary = scrapy.Field()
+    limit_experience = scrapy.Field()
+    limit_education_background = scrapy.Field()
+    publish_time = scrapy.Field()
+    recruit_num = scrapy.Field()
+    job_detail_info = scrapy.Field()
+
+
+class CompanyInfoItem(scrapy.Item):
+    name = scrapy.Field()
+    classification = scrapy.Field()
+
+
+class FiveOneJobInfoItem(scrapy.Item, CollectionMixin):
+    id = scrapy.Field()
+    major = scrapy.Field()
+    position_name = scrapy.Field()
+    salary = scrapy.Field()
+    company = scrapy.Field()
+    description = scrapy.Field()
+    education_limit = scrapy.Field()
+    num_of_recruit = scrapy.Field()

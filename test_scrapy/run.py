@@ -1,9 +1,9 @@
 from scrapy import cmdline
 
 
-def crawl():
-    cmdline.execute('scrapy crawl edu_sc_zcwj'.split())
+def crawl(spider_name: str):
+    cmdline.execute(('scrapy crawl %s --nolog' % spider_name).split())
 
 
 if __name__ == '__main__':
-    crawl()
+    crawl('n_job')

@@ -1,12 +1,12 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from logging import getLogger
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+from sic_edu.enums import WebURLFlagEnum
+from selenium.webdriver.chrome.options import Options
 
 
 class SicEduSpiderMiddleware:
@@ -101,3 +101,29 @@ class SicEduDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class SeleniumMiddleware:
+    def __init__(self, time_out=500, service_args=None):
+        self.timeout = time_out
+        self.logger = getLogger(__name__)
+        self.browser = webdriver.Chrome()
+        self.browser.set_window_size(1400, 700)
+        self.browser.set_page_load_timeout(self.timeout)
+        self.wait = WebDriverWait(self.browser, self.timeout)
+
+    def __del__(self):
+        self.browser.quit()
+
+    def process_request(self, request, spider):
+        self.logger.debug('Chrome is starting')
+        try:
+            if request.meta.get('level', -1) == WebURLFlagEnum.SECONDE_LEVEL_PAGE:
+                return None
+            # 加载页面
+            self.browser.switch_to.window("")
+            self.browser.get(request.url)
+            return HtmlResponse(url=request.url, body=self.browser.page_source,
+                                request=request, encoding='utf-8', status=200)
+        except TimeoutError:
+            return HtmlResponse(url=request.url, status=500, request=request)
